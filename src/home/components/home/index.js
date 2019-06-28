@@ -33,7 +33,6 @@ const ImagesContainer = styled.div`
     margin-top: 100px;
     justify-content: space-between;
     padding-bottom: 20px;
-    border: 1px solid red;
 
     @media (max-width: 1400px) {
         width: 60%;
