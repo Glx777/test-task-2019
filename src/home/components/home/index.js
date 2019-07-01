@@ -1,28 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 
 import toast from '../../../services/toast'
 
+import { Container, Image, Heading } from '../../../common/styles'
+
 import data from '../../../common/data.json'
-
-const Container = styled.div`
-    display: flex;
-    flex-flow: column wrap;
-`
-
-const Heading = styled.p`
-    font-size: 60px;
-    font-family: 'Poppins', sans-serif;
-    color: #222;
-    margin-left: auto;
-    margin-right: auto;
-
-    @media (max-width: 800px) {
-        font-size: 40pt;
-        text-align: center;
-    }
-`
 
 const ImagesContainer = styled.div`
     display: flex;
@@ -46,29 +30,6 @@ const ImagesContainer = styled.div`
     }
 `
 
-const Image = styled.img`
-    border-radius: 8px;
-    width: 150px;
-    height: 150px;
-    cursor: pointer;
-
-    @media (max-width: 800px) {
-        margin-top: 20px;
-        width: 400px;
-        height: 350px;
-    }
-
-    @media (max-width: 600px) {
-        width: 350px;
-        height: 300px;
-    }
-
-    @media (max-width: 400px) {
-        width: 250px;
-        height: 250px;
-    }
-`
-
 const Home = ({ history }) => {
     const [carriers, setCarriers] = useState([])
 
@@ -81,20 +42,19 @@ const Home = ({ history }) => {
         try {
             const res = await fakeRequest()
 
-            setCarriers(res)
+            res && setCarriers(res)
         } catch (e) {
             toast.error(e)
         }
     }
 
-    useEffect(() => {
-        getData()
-    })
+    useMemo(() => getData(), [carriers]) // eslint-disable-line
 
     const renderCarriers = () =>
         carriers.length &&
         carriers.map((item, index) => (
             <Image
+                type={'home'}
                 key={index}
                 alt={item.name}
                 src={item.cover}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import styled from 'styled-components'
 import MaskedInput from 'react-text-mask'
 import PropTypes from 'prop-types'
@@ -7,55 +7,9 @@ import { isEmpty } from 'lodash'
 
 import toast from '../../../services/toast'
 
+import { Container, Image, Heading } from '../../../common/styles'
+
 import data from '../../../common/data.json'
-
-const Container = styled.form`
-    display: flex;
-    flex-flow: column;
-    align-items: center;
-`
-
-const Heading = styled.p`
-    font-size: 60pt;
-    font-family: 'Poppins', sans-serif;
-    color: #222;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 40px;
-
-    @media (max-width: 800px) {
-        font-size: 40pt;
-        text-align: center;
-    }
-
-    @media (max-width: 600px) {
-        margin: 10px 0;
-    }
-`
-
-const Image = styled.img`
-    width: 150px;
-    height: 150px;
-    border-radius: 8px;
-    margin-bottom: 40px;
-
-    @media (max-width: 800px) {
-        margin-top: 20px;
-        width: 400px;
-        height: 350px;
-    }
-
-    @media (max-width: 600px) {
-        width: 350px;
-        height: 300px;
-    }
-
-    @media (max-width: 400px) {
-        width: 250px;
-        height: 250px;
-    }
-
-`
 
 const Row = styled.div`
     display: flex;
@@ -180,7 +134,7 @@ const Refill = ({
         try {
             const res = await getCoverRequest()
 
-            res && res.length && setCarriers(res)
+            res && setCarriers(res)
         } catch (e) {
             toast.error(e)
         }
@@ -211,14 +165,14 @@ const Refill = ({
         }
     }
 
-    useEffect(() => {
-        getCover()
-    })
+    useMemo(() => getCover(), [carriers]) // eslint-disable-line
+
+    const type = 'refill'
 
     return (
-        <Container onSubmit={onSubmit}>
-            <Heading>Refill</Heading>
-            <Image alt={carrier} src={getCarrier()} />
+        <Container type={type} onSubmit={onSubmit}>
+            <Heading type={type}>Refill</Heading>
+            <Image type={type} alt={carrier} src={getCarrier()} />
             <Row>
                 {' '}
                 <Label>Phone Number:</Label>
