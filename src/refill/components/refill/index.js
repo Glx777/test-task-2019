@@ -3,6 +3,8 @@ import { withFormik } from 'formik'
 
 import Refill from './refill'
 
+import toast from '../../../services/toast'
+
 const validationSchema = Yup.object().shape({
     phone: Yup.string()
         .required('Phone is required!')
@@ -33,7 +35,19 @@ const mapPropsToValues = () => ({
     amount: ''
 })
 
+const handleSubmit = (values, { props }) => {
+    const randomValue = Math.floor(Math.random() * Math.floor(2))
+
+    if (randomValue) {
+        toast.success('Success')
+        props.history.push('/')
+    } else {
+        toast.error('Failure')
+    }
+}
+
 export default withFormik({
     validationSchema,
-    mapPropsToValues
+    mapPropsToValues,
+    handleSubmit
 })(Refill)

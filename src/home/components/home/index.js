@@ -1,12 +1,10 @@
-import React, { useMemo, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 
-import toast from '../../../services/toast'
-
 import { Container, Image, Heading } from '../../../common/styles'
 
-import data from '../../../common/data.json'
+import { useData } from '../../hooks'
 
 const ImagesContainer = styled.div`
     display: flex;
@@ -31,46 +29,28 @@ const ImagesContainer = styled.div`
 `
 
 const Home = ({ history }) => {
-    const [carriers, setCarriers] = useState([])
-
-    const fakeRequest = () =>
-        new Promise(resolve => {
-            resolve(data)
-        })
-
-    const getData = async () => {
-        try {
-            const res = await fakeRequest()
-
-            res && setCarriers(res)
-        } catch (e) {
-            toast.error(e)
-        }
-    }
-
-    useMemo(() => getData(), [carriers]) // eslint-disable-line
-
-    const renderCarriers = () =>
-        carriers.length &&
-        carriers.map((item, index) => (
-            <Image
-                type={'home'}
-                key={index}
-                alt={item.name}
-                src={item.cover}
-                onClick={() =>
-                    history.push({
-                        pathname: '/refill',
-                        state: { carrier: item.name }
-                    })
-                }
-            />
-        ))
+    const data = useData()
 
     return (
         <Container>
             <Heading>Choose your carrier</Heading>
-            <ImagesContainer>{renderCarriers()}</ImagesContainer>
+            <ImagesContainer>
+                {data.length &&
+                    data.map((item, index) => (
+                        <Image
+                            type={'home'}
+                            key={index}
+                            alt={item.name}
+                            src={item.cover}
+                            onClick={() =>
+                                history.push({
+                                    pathname: '/refill',
+                                    state: { carrier: item.name }
+                                })
+                            }
+                        />
+                    ))}
+            </ImagesContainer>
         </Container>
     )
 }

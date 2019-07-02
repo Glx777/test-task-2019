@@ -21,11 +21,13 @@ module.exports = {
         ecmaVersion: 2018,
         sourceType: 'module'
     },
-    plugins: ['react'],
+    plugins: ['react', 'react-hooks'],
     rules: {
         indent: ['error', 4],
         'linebreak-style': ['error', 'unix'],
         quotes: ['error', 'single'],
-        semi: ['error', 'never']
+        semi: ['error', 'never'],
+        'react-hooks/rules-of-hooks': 'error',
+        'react-hooks/exhaustive-deps': 'warn'
     }
 }

@@ -1,15 +1,12 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import MaskedInput from 'react-text-mask'
 import PropTypes from 'prop-types'
-import createNumberMask from 'text-mask-addons/dist/createNumberMask'
-import { isEmpty } from 'lodash'
-
-import toast from '../../../services/toast'
 
 import { Container, Image, Heading } from '../../../common/styles'
+import { phoneMask, priceMask } from '../../../common/inputMasks'
 
-import data from '../../../common/data.json'
+import { useData } from '../../hooks'
 
 const Row = styled.div`
     display: flex;
@@ -81,27 +78,6 @@ const SubmitButton = styled.button`
     }
 `
 
-const mask = [
-    '+',
-    '7',
-    ' ',
-    '(',
-    /[1-9]/,
-    /\d/,
-    /\d/,
-    ')',
-    ' ',
-    /\d/,
-    /\d/,
-    /\d/,
-    '-',
-    /\d/,
-    /\d/,
-    '-',
-    /\d/,
-    /\d/
-]
-
 const Refill = ({
     handleChange,
     handleBlur,
@@ -111,73 +87,28 @@ const Refill = ({
     touched,
     history
 }) => {
-    const [carriers, setCarriers] = useState([])
+    const carrier =
+        history.location.state && history.location.state.carrier
+            ? history.location.state.carrier
+            : 'mts'
+    const type = 'refill'
+    const data = useData()
 
-    const carrier = history.location.state.carrier
-
-    const fakeRequest = () => {
-        const randomValue = Math.floor(Math.random() * Math.floor(2))
-
-        return new Promise((resolve, reject) => {
-            if (randomValue) resolve('Success!')
-
-            reject('Failure')
-        })
-    }
-
-    const getCoverRequest = () =>
-        new Promise(resolve => {
-            resolve(data)
-        })
-
-    const getCover = async () => {
-        try {
-            const res = await getCoverRequest()
-
-            res && setCarriers(res)
-        } catch (e) {
-            toast.error(e)
-        }
-    }
-
-    const getCarrier = () => {
-        const cover = carriers.filter(item => item.name === carrier)
+    const image = useMemo(() => {
+        const cover = data.filter(item => item.name === carrier)
 
         return cover && cover.length && cover[0].cover
-    }
-
-    const onSubmit = async e => {
-        e.preventDefault()
-
-        handleSubmit && handleSubmit(e)
-
-        if (isEmpty(errors) && !isEmpty(touched)) {
-            try {
-                const res = await fakeRequest()
-
-                if (res) {
-                    toast.success(res)
-                    history.push('/')
-                }
-            } catch (e) {
-                toast.error(e)
-            }
-        }
-    }
-
-    useMemo(() => getCover(), [carriers]) // eslint-disable-line
-
-    const type = 'refill'
+    }, [data, carrier])
 
     return (
-        <Container type={type} onSubmit={onSubmit}>
+        <Container type={type} onSubmit={handleSubmit}>
             <Heading type={type}>Refill</Heading>
-            <Image type={type} alt={carrier} src={getCarrier()} />
+            <Image type={type} alt={carrier} src={image} />
             <Row>
                 {' '}
                 <Label>Phone Number:</Label>
                 <Input
-                    mask={mask}
+                    mask={phoneMask}
                     id="phone"
                     type="tel"
                     onChange={handleChange}
@@ -196,7 +127,7 @@ const Refill = ({
                 <Input
                     id="amount"
                     type="tel"
-                    mask={createNumberMask({ prefix: '', suffix: ' ₽' })}
+                    mask={priceMask}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.amount}

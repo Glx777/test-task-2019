@@ -1,33 +1,13 @@
 const func = (s, a, b) => {
+    if (!s || typeof s !== 'string') return -1
 
-    if (!s) {
-        return -1
-    }
+    if (s.lastIndexOf(a) > 0 && a && (s.lastIndexOf(b) < 1 || !b))
+        return s.lastIndexOf(a)
 
-    var aIndex = -1
-    var bIndex = -1
+    if (s.lastIndexOf(a) > 0 && a && s.lastIndexOf(b) > 0 && b)
+        return Math.max(s.lastIndexOf(a), s.lastIndexOf(b))
 
-    if (aIndex === -1 && bIndex === -1) {
-        if (s.lastIndexOf(a) > 0 && a) {
-            aIndex = s.lastIndexOf(a)
-        }
-
-        if (s.lastIndexOf(b) > 0 && b) {
-            bIndex = s.lastIndexOf(b)
-        }
-    }
-    
-    if (aIndex !== -1) {
-        if (bIndex === -1) {
-            return aIndex
-        }
-
-        return Math.max(aIndex, bIndex)
-    }
-    
-    if (bIndex !== -1) {
-        return bIndex
-    }
+    if (s.lastIndexOf(b) > 0 && b) return s.lastIndexOf(b)
 
     return -1
 }
